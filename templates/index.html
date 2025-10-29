@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f9;
+            text-align: center;
+            padding: 30px;
+        }
+        #chatbox {
+            width: 400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px #aaa;
+            padding: 15px;
+            height: 400px;
+            overflow-y: auto;
+        }
+        input {
+            width: 75%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px;
+            border: none;
+            background: #007BFF;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .user { text-align: right; color: blue; }
+        .bot { text-align: left; color: green; }
+    </style>
+</head>
+<body>
+    <h1>💬 Smart Chatbot</h1>
+    <div id="chatbox"></div>
+    <br>
+    <input type="text" id="message" placeholder="Type your message here..." />
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        async function sendMessage() {
+            const userInput = document.getElementById("message").value;
+            if (userInput.trim() === "") return;
+
+            const chatbox = document.getElementById("chatbox");
+            chatbox.innerHTML += `<p class='user'><b>You:</b> ${userInput}</p>`;
+
+            const response = await fetch("/get", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `message=${encodeURIComponent(userInput)}`
+            });
+
+            const data = await response.json();
+            chatbox.innerHTML += `<p class='bot'><b>Bot:</b> ${data.response}</p>`;
+            document.getElementById("message").value = "";
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
